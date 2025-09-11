@@ -16,7 +16,7 @@ set NAME=JABViewer
 set ENTRY=jab_viewer\app.py
 
 REM Collect extra submodules just in case (safe no-ops if not needed)
-python -m PyInstaller ^
+uv run PyInstaller ^
   --noconfirm --clean --onefile --windowed ^
   --name %NAME% ^
   --collect-submodules JABWrapper ^
@@ -41,7 +41,6 @@ echo [4/4] Success!
 echo Output: %CD%\dist\%NAME%.exe
 echo.
 echo Note:
-echo - Defina RC_JAVA_ACCESS_BRIDGE_DLL para o caminho da WindowsAccessBridge-64.dll
-echo   (ou informe no primeiro uso do app).
+echo - Set RC_JAVA_ACCESS_BRIDGE_DLL to the path of windowsaccessbridge -64.dll
 echo.
 endlocal
