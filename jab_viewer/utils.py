@@ -1,22 +1,7 @@
 import os
 from typing import Optional
 
-from dotenv import load_dotenv
-
 ENV_DLL_KEY = 'RC_JAVA_ACCESS_BRIDGE_DLL'
-
-
-def load_env(env_path: Optional[str] = None) -> None:
-    if env_path and os.path.isfile(env_path):
-        load_dotenv(env_path, override=False)
-    else:
-        # Try to load .env at project root and package root
-        for candidate in [
-            os.path.join(os.getcwd(), '.env'),
-            os.path.join(os.path.dirname(__file__), '.env'),
-        ]:
-            if os.path.isfile(candidate):
-                load_dotenv(candidate, override=False)
 
 
 def ensure_wab_env(dll_path: Optional[str] = None) -> Optional[str]:

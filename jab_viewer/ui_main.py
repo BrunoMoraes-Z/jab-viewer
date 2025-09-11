@@ -1,10 +1,10 @@
 from __future__ import annotations
 
+import fnmatch
 import os
 import re
 import tkinter as tk
 from tkinter import filedialog, messagebox, ttk
-import fnmatch
 from typing import Dict, Optional
 
 import customtkinter as ctk
@@ -15,7 +15,8 @@ if 'ROBOT_ARTIFACTS' not in os.environ:
 
 from .highlight import HighlightOverlay
 from .jab_interface import JabInterface, JavaWindow
-from .utils import ENV_DLL_KEY, ensure_wab_env, load_env
+from .utils import ENV_DLL_KEY, ensure_wab_env
+from .i18n import tr
 
 
 class JABViewerApp(ctk.CTk):
@@ -26,13 +27,12 @@ class JABViewerApp(ctk.CTk):
         self.minsize(1000, 600)
         self.attributes('-topmost', True)
 
-        load_env()
         dll_path = ensure_wab_env()
         if not dll_path:
             if not self._prompt_wab_path():
                 messagebox.showerror(
-                    'Java Access Bridge',
-                    'Caminho para WindowsAccessBridge-64.dll não definido. Configure e reinicie.',
+                    tr('wab.title'),
+                    tr('wab.path.not.set'),
                 )
                 self.destroy()
                 return
@@ -40,7 +40,10 @@ class JABViewerApp(ctk.CTk):
         try:
             self.jab = JabInterface()
         except Exception as e:
-            messagebox.showerror('JAB Init', f'Falha ao iniciar JAB: {e}')
+            messagebox.showerror(
+                tr('errors.jab_init.title'),
+                tr('errors.jab_init.body', e=str(e)),
+            )
             self.destroy()
             return
 
@@ -56,14 +59,17 @@ class JABViewerApp(ctk.CTk):
 
     def _prompt_wab_path(self) -> bool:
         ans = messagebox.askyesno(
-            'WindowsAccessBridge',
-            'Definir caminho para WindowsAccessBridge-64.dll agora?',
+            tr('wab.title'),
+            tr('wab.prompt.set_now'),
         )
         if not ans:
             return False
         path = filedialog.askopenfilename(
-            title='Selecione WindowsAccessBridge-64.dll',
-            filetypes=[('DLL', '*.dll'), ('Todos', '*.*')],
+            title=tr('file.select_wab'),
+            filetypes=[
+                (tr('filetypes.dll'), '*.dll'),
+                (tr('filetypes.all'), '*.*'),
+            ],
         )
         if not path:
             return False
@@ -75,7 +81,7 @@ class JABViewerApp(ctk.CTk):
         top = ctk.CTkFrame(self)
         top.pack(side='top', fill='x', padx=8, pady=8)
 
-        ctk.CTkLabel(top, text='Aplicação Java:').pack(
+        ctk.CTkLabel(top, text=tr('app.java.label')).pack(
             side='left', padx=(8, 6)
         )
         self.app_var = tk.StringVar()
@@ -89,7 +95,7 @@ class JABViewerApp(ctk.CTk):
         self.app_combo.pack(side='left', padx=(0, 8))
 
         self.reload_btn = ctk.CTkButton(
-            top, text='Recarregar', command=self.reload_windows
+            top, text=tr('action.reload'), command=self.reload_windows
         )
         self.reload_btn.pack(side='left')
 
@@ -126,7 +132,7 @@ class JABViewerApp(ctk.CTk):
         locator_frame.pack(fill='x', padx=8, pady=(8, 0))
         ctk.CTkLabel(
             locator_frame,
-            text='Localizador',
+            text=tr('ui.locator.title'),
             font=ctk.CTkFont(size=13, weight='bold'),
         ).pack(anchor='w')
 
@@ -137,7 +143,7 @@ class JABViewerApp(ctk.CTk):
             state='disabled',
         )
         self.current_locator_entry.pack(fill='x', pady=(4, 2))
-        # Copiar locator ao clicar com qualquer botão
+        # Copy locator on any mouse click
         for ev in ('<Button>', '<Button-1>', '<Button-2>', '<Button-3>'):
             self.current_locator_entry.bind(ev, self._on_current_locator_click)
 
@@ -150,7 +156,7 @@ class JABViewerApp(ctk.CTk):
         self.locator_input.pack(side='left', fill='x', expand=True)
         self.locator_btn = ctk.CTkButton(
             search_row,
-            text='Pesquisar',
+            text=tr('ui.locator.search'),
             width=100,
             command=self._on_locator_search,
         )
@@ -163,7 +169,7 @@ class JABViewerApp(ctk.CTk):
 
         ctk.CTkLabel(
             right,
-            text='Propriedades',
+            text=tr('ui.properties.title'),
             font=ctk.CTkFont(size=14, weight='bold'),
         ).pack(anchor='w', padx=8, pady=(8, 4))
         self.props_text = ctk.CTkTextbox(right, wrap='word')
@@ -187,7 +193,8 @@ class JABViewerApp(ctk.CTk):
             wins = self.jab.list_java_windows()
         except Exception as e:
             messagebox.showerror(
-                'Listar Janelas', f'Erro ao listar janelas Java: {e}'
+                tr('errors.list_windows.title'),
+                tr('errors.list_windows.body', e=str(e)),
             )
             return
         prev_hwnd = self._selected_hwnd
@@ -227,7 +234,8 @@ class JABViewerApp(ctk.CTk):
             root = self.jab.set_root_from_hwnd(win.hwnd)
         except Exception as e:
             messagebox.showerror(
-                'Carregar Árvore', f'Erro ao obter contexto da janela: {e}'
+                tr('errors.load_tree.title'),
+                tr('errors.load_tree.body', e=str(e)),
             )
             return
         self._populate_tree(root)
@@ -338,7 +346,7 @@ class JABViewerApp(ctk.CTk):
             if value:
                 self.clipboard_clear()
                 self.clipboard_append(value)
-                self.title('JABViewer — valor copiado')
+                self.title(tr('window.title.copied_value'))
                 self.after(900, lambda: self.title('JABViewer'))
         except Exception:
             pass
@@ -431,7 +439,7 @@ class JABViewerApp(ctk.CTk):
             self.clipboard_clear()
             self.clipboard_append(text)
             self.locator_msg.configure(
-                text='Copiado com sucesso', text_color='green'
+                text=tr('ui.locator.copied'), text_color='green'
             )
             self.after(
                 1200,
@@ -459,29 +467,21 @@ class JABViewerApp(ctk.CTk):
             text = self.locator_input_var.get().strip()
             loc = self._parse_locator(text)
             if not loc:
-                self.locator_msg.configure(
-                    text='Locator incorreto, verifique o texto informado'
-                )
+                self.locator_msg.configure(text=tr('ui.locator.invalid'))
                 return
             results, err = self._find_by_locator(loc)
             if err == 'invalid':
-                self.locator_msg.configure(
-                    text='Locator incorreto, verifique o texto informado'
-                )
+                self.locator_msg.configure(text=tr('ui.locator.invalid'))
                 return
             if not results:
-                self.locator_msg.configure(
-                    text='Nenhum elemento encontrado com o locator informado'
-                )
+                self.locator_msg.configure(text=tr('ui.locator.not_found'))
                 return
             if len(results) > 1:
                 self.locator_msg.configure(
-                    text=f'Foram encontrados {len(results)} elementos, tente refinar o locator.'
+                    text=tr('ui.locator.many_found', n=len(results))
                 )
                 return
             iid, _node = results[0]
             self._select_iid(iid)
         except Exception:
-            self.locator_msg.configure(
-                text='Locator incorreto, verifique o texto informado'
-            )
+            self.locator_msg.configure(text=tr('ui.locator.invalid'))

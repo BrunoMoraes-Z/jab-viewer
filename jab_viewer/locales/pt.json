@@ -1,0 +1,30 @@
+{
+  "wab.title": "WindowsAccessBridge",
+  "wab.prompt.set_now": "Definir caminho para WindowsAccessBridge-64.dll agora?",
+  "wab.path.not.set": "Caminho para WindowsAccessBridge-64.dll não definido. Configure e reinicie.",
+
+  "file.select_wab": "Selecione WindowsAccessBridge-64.dll",
+  "filetypes.dll": "DLL",
+  "filetypes.all": "Todos",
+
+  "app.java.label": "Aplicação Java:",
+  "action.reload": "Recarregar",
+
+  "errors.list_windows.title": "Listar Janelas",
+  "errors.list_windows.body": "Erro ao listar janelas Java: {e}",
+  "errors.jab_init.title": "JAB Init",
+  "errors.jab_init.body": "Falha ao iniciar JAB: {e}",
+  "errors.load_tree.title": "Carregar Árvore",
+  "errors.load_tree.body": "Erro ao obter contexto da janela: {e}",
+
+  "ui.locator.title": "Localizador",
+  "ui.locator.search": "Pesquisar",
+  "ui.locator.copied": "Copiado com sucesso",
+  "ui.locator.invalid": "Locator incorreto, verifique o texto informado",
+  "ui.locator.not_found": "Nenhum elemento encontrado com o locator informado",
+  "ui.locator.many_found": "Foram encontrados {n} elementos, tente refinar o locator.",
+
+  "ui.properties.title": "Propriedades",
+  "window.title.copied_value": "JABViewer — valor copiado"
+}
+

@@ -22,6 +22,7 @@ python -m PyInstaller ^
   --collect-submodules JABWrapper ^
   --collect-submodules win32com ^
   --collect-submodules win32 ^
+  --add-data "jab_viewer\locales;jab_viewer\locales" ^
   "%ENTRY%"
 
 set ERR=%ERRORLEVEL%
@@ -44,4 +45,3 @@ echo - Defina RC_JAVA_ACCESS_BRIDGE_DLL para o caminho da WindowsAccessBridge-64
 echo   (ou informe no primeiro uso do app).
 echo.
 endlocal
-

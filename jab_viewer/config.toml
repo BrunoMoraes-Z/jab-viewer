@@ -1,0 +1,4 @@
+[app]
+# Language for UI translations: "en" (default) or "pt"
+language = "en"
+
