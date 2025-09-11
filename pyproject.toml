@@ -1,0 +1,14 @@
+[project]
+name = "jab-viewer"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "blue>=0.9.1",
+    "customtkinter>=5.2.2",
+    "java-access-bridge-wrapper>=1.2.0",
+    "pydantic>=2.11.7",
+    "pyinstaller>=6.15.0",
+    "python-dotenv>=1.1.1",
+]

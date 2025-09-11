@@ -1,0 +1,32 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "JABViewer: Executar (módulo)",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "jab_viewer.app",
+      "cwd": "${workspaceFolder}",
+      "console": "integratedTerminal",
+      "justMyCode": true,
+      "env": {
+        "PYTHONIOENCODING": "utf-8",
+        "RC_JAVA_ACCESS_BRIDGE_DLL": "C:\\Program Files\\Java\\jdk-17\\bin\\WindowsAccessBridge-64.dll"
+      }
+    },
+    {
+      "name": "JABViewer: Executar (definir DLL)",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "jab_viewer.app",
+      "cwd": "${workspaceFolder}",
+      "console": "integratedTerminal",
+      "justMyCode": true,
+      "env": {
+        "PYTHONIOENCODING": "utf-8",
+        "RC_JAVA_ACCESS_BRIDGE_DLL": "C:\\Program Files\\Java\\jdk-17\\bin\\WindowsAccessBridge-64.dll"
+      }
+    }
+  ]
+}
+
