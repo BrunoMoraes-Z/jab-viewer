@@ -2,29 +2,27 @@
   "wab.title": "WindowsAccessBridge",
   "wab.prompt.set_now": "Set path to WindowsAccessBridge-64.dll now?",
   "wab.path.not.set": "Path to WindowsAccessBridge-64.dll not set. Configure and restart.",
-
   "file.select_wab": "Select WindowsAccessBridge-64.dll",
   "filetypes.dll": "DLL",
   "filetypes.all": "All",
-
   "app.java.label": "Java Application:",
   "action.reload": "Reload",
-
   "errors.list_windows.title": "List Windows",
   "errors.list_windows.body": "Error listing Java windows: {e}",
   "errors.jab_init.title": "JAB Init",
   "errors.jab_init.body": "Failed to initialize JAB: {e}",
   "errors.load_tree.title": "Load Tree",
   "errors.load_tree.body": "Error getting window context: {e}",
-
   "ui.locator.title": "Locator",
   "ui.locator.search": "Search",
   "ui.locator.copied": "Copied successfully",
   "ui.locator.invalid": "Invalid locator, check the provided text",
   "ui.locator.not_found": "No element found for the given locator",
   "ui.locator.many_found": "Found {n} elements, try refining the locator.",
-
   "ui.properties.title": "Properties",
-  "window.title.copied_value": "JABViewer — value copied"
+  "ui.properties.col.key": "Property",
+  "ui.properties.col.value": "Value",
+  "window.title.copied_value": "JABViewer — value copied",
+  "ui.loading.default": "Loading...",
+  "ui.loading.tree": "Loading tree..."
 }
-
