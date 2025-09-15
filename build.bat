@@ -37,6 +37,10 @@ if not exist dist\%NAME%.exe (
   exit /b 1
 )
 
+if exist config.toml (
+  copy /Y config.toml dist\config.toml >nul
+)
+
 echo [4/4] Success!
 echo Output: %CD%\dist\%NAME%.exe
 echo.

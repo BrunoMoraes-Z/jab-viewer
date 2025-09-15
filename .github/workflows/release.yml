@@ -1,0 +1,101 @@
+name: Build and Release (Windows)
+
+on:
+  push:
+    branches:
+      - '**'
+
+permissions:
+  contents: write
+
+jobs:
+  build-windows:
+    name: Build Windows EXE
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python (from .python-version)
+        uses: actions/setup-python@v5
+        with:
+          python-version-file: .python-version
+
+      - name: Setup uv
+        uses: astral-sh/setup-uv@v3
+
+      - name: Sync dependencies (uv)
+        run: |
+          uv --version
+          uv sync --locked
+        shell: pwsh
+
+      - name: Build EXE (PyInstaller via uv)
+        run: |
+          .\build.bat
+        shell: pwsh
+
+      - name: Read project version and decide tag
+        id: meta
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $version = python -c "import tomllib; print(tomllib.load(open('pyproject.toml','rb'))['project']['version'])"
+
+          if ([string]::IsNullOrWhiteSpace($version)) { throw 'Could not read version from pyproject.toml' }
+
+          if ("${{ github.ref_name }}" -eq "main") {
+            $tag = "v$version"
+            $prerelease = 'false'
+            $suffix = ''
+            $makeLatest = 'true'
+            $releaseName = "JAB Viewer $version"
+          } else {
+            $short = "${{ github.sha }}".Substring(0,7)
+            $tag = "v$version-snapshot-$short"
+            $prerelease = 'true'
+            $suffix = "-snapshot-$short"
+            $makeLatest = 'false'
+            $releaseName = "JAB Viewer $version (snapshot $short)"
+          }
+
+          echo "version=$version"        >> $env:GITHUB_OUTPUT
+          echo "tag=$tag"                >> $env:GITHUB_OUTPUT
+          echo "prerelease=$prerelease"  >> $env:GITHUB_OUTPUT
+          echo "suffix=$suffix"          >> $env:GITHUB_OUTPUT
+          echo "make_latest=$makeLatest" >> $env:GITHUB_OUTPUT
+          echo "release_name=$releaseName" >> $env:GITHUB_OUTPUT
+
+      - name: Package artifact (zip)
+        id: package
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $zipName = "JabViewer-windows-x64-v${{ steps.meta.outputs.version }}${{ steps.meta.outputs.suffix }}.zip"
+          if (Test-Path dist) {
+            if (Test-Path $zipName) { Remove-Item -Force $zipName }
+            Compress-Archive -Path dist\* -DestinationPath $zipName
+          } else {
+            throw 'dist directory not found; build may have failed.'
+          }
+          echo "zip=$zipName" >> $env:GITHUB_OUTPUT
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: JabViewer-windows-v${{ steps.meta.outputs.version }}${{ steps.meta.outputs.suffix }}
+          path: ${{ steps.package.outputs.zip }}
+          if-no-files-found: error
+
+      - name: Create or update GitHub Release
+        uses: ncipollo/release-action@v1
+        with:
+          tag: ${{ steps.meta.outputs.tag }}
+          name: ${{ steps.meta.outputs.release_name }}
+          artifacts: ${{ steps.package.outputs.zip }}
+          allowUpdates: true
+          replacesArtifacts: true
+          makeLatest: ${{ steps.meta.outputs.make_latest }}
+          prerelease: ${{ steps.meta.outputs.prerelease }}
+          artifactErrorsFailBuild: true
